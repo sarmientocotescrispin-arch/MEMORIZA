@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Colores Wayuu</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(to bottom, #f9c57e, #e08a47);
+      font-family: 'Nunito', 'Comic Sans MS', cursive, sans-serif;
+      text-align: center;
+      color: #1d1d10;
+      overflow: hidden;
+    }
+
+    @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@700&display=swap');
+
+    h1 {
+      color: #0d3b66;
+      text-shadow: 2px 2px 6px rgba(255,255,255,0.7);
+      margin-bottom: 10px;
+      font-size: 2.4em;
+      letter-spacing: 1px;
+    }
+
+    /* Fondo de mochila */
+    .mochila-bg {
+      background: repeating-linear-gradient(
+        45deg,
+        #e63946 0px, #e63946 20px,
+        #f1c40f 20px, #f1c40f 40px,
+        #3498db 40px, #3498db 60px,
+        #2ecc71 60px, #2ecc71 80px
+      );
+      height: 90px;
+      margin: 15px 0;
+      border-radius: 12px;
+      border: 3px solid #333;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    /* Menú principal */
+    #menu {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: url('https://images.unsplash.com/photo-1553750289-1d1c9829c83e?q=80&fm=jpg') center/cover;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+      color: white;
+      text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
+      backdrop-filter: blur(3px);
+    }
+
+    #menu h2 {
+      color: #FFD700;
+      font-size: 2.8em;
+      margin-bottom: 20px;
+      text-align: center;
+      text-shadow: 0 0 10px black;
+    }
+
+    .menu-group {
+      margin: 20px 0;
+      text-align: center;
+    }
+
+    .menu-group h3 {
+      margin-bottom: 15px;
+      font-size: 1.4em;
+      color: gold;
+    }
+
+    .menu-btn {
+      margin: 10px 15px;
+      padding: 14px 30px;
+      font-size: 1.3em;
+      background-color: #d45113;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+      transition: all 0.3s;
+    }
+
+    .menu-btn:hover {
+      background-color: #ff6d00;
+      transform: translateY(-3px);
+    }
+
+    /* Puntuación */
+    .scoreboard {
+      display: flex;
+      justify-content: space-around;
+      width: 85%;
+      max-width: 600px;
+      margin: 15px auto;
+      font-size: 1.3em;
+      font-weight: bold;
+      color: #0d3b66;
+    }
+
+    .player {
+      padding: 12px 20px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.8);
+      width: 45%;
+      transition: all 0.4s;
+    }
+
+    .player.current {
+      border: 4px solid gold;
+      background: rgba(255,255,220,0.9);
+      box-shadow: 0 0 20px rgba(255,215,0,0.6);
+      transform: scale(1.05);
+    }
+
+    /* Cuadrícula */
+    #game-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr); /* 3 columnas ahora */
+      grid-gap: 20px;
+      width: 600px;
+      margin: 30px auto;
+      max-width: 90vw;
+    }
+
+    .btn-wayuu {
+      width: 160px;
+      height: 160px;
+      border: 6px solid #333;
+      border-radius: 15px;
+      cursor: pointer;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+      transition: transform 0.2s, box-shadow 0.3s;
+    }
+
+    .btn-wayuu:hover {
+      transform: scale(1.08);
+    }
+
+    .btn-wayuu.active {
+      transform: scale(0.92);
+      box-shadow: 0 0 30px rgba(255,215,0,0.8);
+    }
+
+    /* Controles */
+    .controls {
+      margin: 20px;
+      padding: 20px;
+      background: rgba(255,255,255,0.9);
+      border-radius: 15px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+      max-width: 900px;
+    }
+
+    .controls p {
+      font-size: 1.2em;
+      margin: 10px 0;
+      color: #0d3b66;
+    }
+
+    button.primary {
+      background-color: #d45113;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 12px 28px;
+      font-size: 16px;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      transition: all 0.3s;
+    }
+
+    button.primary:hover {
+      background-color: #ff6d00;
+      transform: translateY(-2px);
+    }
+
+    /* Información */
+    #info {
+      font-size: 14px;
+      color: #0d3b66;
+      max-width: 600px;
+      margin: 15px auto;
+      line-height: 1.6;
+      padding: 10px;
+      background: rgba(255,255,255,0.7);
+      border-radius: 10px;
+    }
+
+    /* Pantalla de victoria */
+    #victory-screen {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.9);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 200;
+      color: white;
+      text-align: center;
+      display: none;
+    }
+
+    #victory-screen h2 {
+      color: gold;
+      font-size: 3em;
+      text-shadow: 0 0 15px yellow;
+      margin-bottom: 10px;
+    }
+
+    #victory-screen p {
+      font-size: 1.5em;
+      margin: 10px 0;
+    }
+
+    #victory-screen img {
+      width: 130px;
+      height: 150px;
+      margin: 20px 0;
+      border: 6px solid gold;
+      border-radius: 15px;
+      object-fit: cover;
+    }
+
+    #victory-screen button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 14px 30px;
+      font-size: 1.2em;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    #victory-screen button:hover {
+      background-color: #388E3C;
+    }
+
+    /* Intro */
+    #intro {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.9);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 150;
+      color: white;
+      text-align: center;
+      display: none;
+    }
+
+    #intro img {
+      width: 160px;
+      height: 160px;
+      margin-bottom: 20px;
+      border-radius: 50%;
+      border: 4px solid #FFD700;
+    }
+
+    #intro h2 {
+      color: gold;
+      font-size: 2.8em;
+      text-shadow: 0 0 10px yellow;
+    }
+
+    #intro p {
+      font-size: 1.2em;
+      margin: 10px 0;
+    }
+
+    #intro button {
+      background-color: #d45113;
+      color: white;
+      border: none;
+      padding: 14px 30px;
+      font-size: 1.3em;
+      border-radius: 12px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    #intro button:hover {
+      background-color: #ff6d00;
+      transform: translateY(-3px);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Menú principal -->
+  <div id="menu">
+    <h2>🎨 Colores Wayuu</h2>
+    <div class="menu-group">
+      <h3>Selecciona un Modo</h3>
+      <button id="modo-figuras" class="menu-btn">🔺 Figuras Geométricas</button>
+      <button id="modo-colores" class="menu-btn">🔴 Colores Tradicionales</button>
+    </div>
+    <div class="menu-group">
+      <h3>Imagen del juego</h3>
+      <img src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/apple/325/person-indigenous_1f9d1.png" alt="Wayúu" style="width:100px; border-radius:50%;">
+    </div>
+  </div>
+
+  <!-- Intro: elegir modo de juego -->
+  <div id="intro">
+    <img src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/apple/325/person-indigenous_1f9d1.png" alt="Wayúu">
+    <h2>Bienvenido al Juego de Colores Wayuu</h2>
+    <p>Selecciona tu estilo de juego:</p>
+    <button id="solo-btn">👤 Modo Solitario</button>
+    <button id="multi-btn">👥 Modo Multijugador</button>
+  </div>
+
+  <!-- Fondo decorativo -->
+  <div class="mochila-bg"></div>
+  <h1>🔺 Colores Wayuu</h1>
+  <p id="modo-text">Modo: Figuras Geométricas</p>
+
+  <!-- Puntuación (solo en multijugador) -->
+  <div class="scoreboard" id="scoreboard" style="display:none">
+    <div id="player1" class="player current">
+      <div><strong>Jugador 1</strong></div>
+      <div>Nivel: <span id="nivel1">0</span></div>
+    </div>
+    <div id="player2" class="player">
+      <div><strong>Jugador 2</strong></div>
+      <div>Nivel: <span id="nivel2">0</span></div>
+    </div>
+  </div>
+
+  <!-- Cuadrícula de juego -->
+  <div id="game-grid"></div>
+
+  <!-- Controles -->
+  <div class="controls">
+    <p id="estado">Presiona Iniciar para comenzar</p>
+    <button id="start-btn" class="primary">▶️ Iniciar</button>
+    <button id="reset-btn" class="primary">🔄 Reiniciar</button>
+    <button id="back-btn" class="primary">⬅️ Regresar al Menú</button>
+  </div>
+
+  <!-- Información -->
+  <div id="info">
+    <strong>Figuras Wayúu:</strong><br>
+    🔺 Triángulo: Familia<br>
+    🔲 Cuadrado: Hogar<br>
+    🔷 Diamante: Agua en el desierto<br>
+    ⬛ Línea entrelazada: Espíritu<br>
+    🔸 Estrella: Guía espiritual<br>
+    ➡️ Flecha: Camino de vida<br>
+    〰️ Onda: Viento o agua
+  </div>
+
+  <!-- Pantalla de victoria -->
+  <div id="victory-screen">
+    <h2>🏆 ¡Victoria!</h2>
+    <img src="https://cdn-icons-png.flaticon.com/512/3075/3075565.png" alt="Wayúu">
+    <p id="winner-message">¡Has demostrado gran sabiduría!</p>
+    <p id="winner-level">Alcanzaste el nivel 8</p>
+    <button id="play-again">Jugar de nuevo</button>
+  </div>
+
+  <script>
+    // Elementos
+    const menu = document.getElementById('menu');
+    const modoFigurasBtn = document.getElementById('modo-figuras');
+    const modoColoresBtn = document.getElementById('modo-colores');
+    const intro = document.getElementById('intro');
+    const soloBtn = document.getElementById('solo-btn');
+    const multiBtn = document.getElementById('multi-btn');
+    const modoText = document.getElementById('modo-text');
+    const gameGrid = document.getElementById('game-grid');
+    const startBtn = document.getElementById('start-btn');
+    const resetBtn = document.getElementById('reset-btn');
+    const backBtn = document.getElementById('back-btn');
+    const estadoElement = document.getElementById('estado');
+    const victoryScreen = document.getElementById('victory-screen');
+    const winnerMessage = document.getElementById('winner-message');
+    const winnerLevel = document.getElementById('winner-level');
+    const playAgain = document.getElementById('play-again');
+    const scoreboard = document.getElementById('scoreboard');
+
+    // Puntuación
+    const nivel1 = document.getElementById('nivel1');
+    const nivel2 = document.getElementById('nivel2');
+    const player1 = document.getElementById('player1');
+    const player2 = document.getElementById('player2');
+
+    // Variables del juego
+    let modoJuego = 'figuras'; // 'figuras' o 'colores'
+    let modoPartida = 'solo'; // 'solo' o 'multi'
+    let secuencia = [];
+    let jugadorActual = 1;
+    let nivelJ1 = 0, nivelJ2 = 0;
+    let nivel = 1;
+    let turnoJugador = false;
+    let indiceJugador = 0;
+    const nivelVictoria = 8;
+
+    // Lista de figuras geométricas Wayúu
+    const figuras = [
+      { id: 'triangulo', color: '#e63946', type: 'shape' },
+      { id: 'cuadrado', color: '#f1c40f', type: 'shape' },
+      { id: 'diamante', color: '#3498db', type: 'shape' },
+      { id: 'linea', color: '#000', type: 'shape' },
+      { id: 'estrella', color: '#FFD700', type: 'shape' },
+      { id: 'flecha', color: '#8B4513', type: 'shape' },
+      { id: 'onda', color: '#20B2AA', type: 'shape' }
+    ];
+
+    // Crear botones según modo
+    function crearBotones() {
+      gameGrid.innerHTML = '';
+      const usarFiguras = modoJuego === 'figuras';
+      const botones = usarFiguras ? figuras : [
+        { id: 'rojo', color: '#e63946' },
+        { id: 'azul', color: '#3498db' },
+        { id: 'amarillo', color: '#f1c40f' },
+        { id: 'verde', color: '#2ecc71' }
+      ];
+
+      botones.forEach(btn => {
+        const div = document.createElement('div');
+        div.id = btn.id;
+        div.className = 'btn-wayuu';
+
+        if (usarFiguras) {
+          // Figuras geométricas
+          if (btn.id === 'triangulo') {
+            div.style.clipPath = 'polygon(50% 0%, 0% 100%, 100% 100%)';
+            div.style.backgroundColor = btn.color;
+          } else if (btn.id === 'cuadrado') {
+            div.style.backgroundColor = btn.color;
+          } else if (btn.id === 'diamante') {
+            div.style.clipPath = 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)';
+            div.style.backgroundColor = btn.color;
+          } else if (btn.id === 'linea') {
+            div.style.background = `repeating-linear-gradient(45deg, ${btn.color} 0px, ${btn.color} 10px, transparent 10px, transparent 20px)`;
+          } else if (btn.id === 'estrella') {
+            div.style.background = `radial-gradient(white 5%, transparent 6%),
+                                    radial-gradient(white 5%, transparent 6%) 20px 20px,
+                                    radial-gradient(#fcd34d 15%, ${btn.color} 16%)`;
+            div.style.backgroundSize = '40px 40px';
+          } else if (btn.id === 'flecha') {
+            div.style.background = `linear-gradient(45deg, transparent 45%, ${btn.color} 45%, ${btn.color} 55%, transparent 55%),
+                                    linear-gradient(135deg, transparent 45%, ${btn.color} 45%, ${btn.color} 55%, transparent 55%)`;
+            div.style.clipPath = 'polygon(30% 0%, 70% 0%, 70% 40%, 100% 40%, 50% 100%, 0% 40%, 30% 40%)';
+          } else if (btn.id === 'onda') {
+            div.style.background = `repeating-linear-gradient(90deg, transparent, transparent 10px, ${btn.color} 10px, ${btn.color} 20px)`;
+          }
+        } else {
+          // Colores simples
+          div.style.backgroundColor = btn.color;
+        }
+
+        gameGrid.appendChild(div);
+      });
+
+      agregarEventos();
+    }
+
+    // Sonidos
+    function playTone(freq) {
+      const audio = new Audio();
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.frequency.value = freq;
+      osc.type = 'sine';
+      gain.gain.setValueAtTime(0.5, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.5);
+    }
+
+    // Iluminar
+    function iluminar(id) {
+      const elem = document.getElementById(id);
+      if (!elem) return;
+      elem.classList.add('active');
+      const freq = {
+        triangulo: 300, cuadrado: 400, diamante: 500, linea: 350,
+        estrella: 550, flecha: 450, onda: 380,
+        rojo: 300, azul: 400, amarillo: 500, verde: 350
+      }[id];
+      playTone(freq);
+      setTimeout(() => elem.classList.remove('active'), 500);
+    }
+
+    // Mostrar secuencia
+    function mostrarSecuencia() {
+      estadoElement.textContent = modoPartida === 'solo' ? 'Observa...' : `Jugador ${jugadorActual}: Observa...`;
+      let i = 0;
+      const intervalo = setInterval(() => {
+        iluminar(secuencia[i]);
+        i++;
+        if (i >= secuencia.length) {
+          clearInterval(intervalo);
+          setTimeout(() => {
+            turnoJugador = true;
+            estadoElement.textContent = modoPartida === 'solo' ? 'Tu turno' : `Jugador ${jugadorActual}: Tu turno`;
+          }, 800);
+        }
+      }, 800);
+    }
+
+    // Siguiente nivel
+    function siguienteNivel() {
+      const opciones = modoJuego === 'figuras'
+        ? figuras.map(f => f.id)
+        : ['rojo', 'azul', 'amarillo', 'verde'];
+      const figura = opciones[Math.floor(Math.random() * opciones.length)];
+      secuencia.push(figura);
+      mostrarSecuencia();
+      turnoJugador = false;
+    }
+
+    // Cambiar jugador
+    function cambiarJugador() {
+      jugadorActual = jugadorActual === 1 ? 2 : 1;
+      actualizarTurnoUI();
+      secuencia = [];
+      nivel = 1;
+      indiceJugador = 0;
+      setTimeout(siguienteNivel, 1000);
+    }
+
+    // Actualizar UI de turno
+    function actualizarTurnoUI() {
+      player1.classList.remove('current');
+      player2.classList.remove('current');
+      if (jugadorActual === 1) player1.classList.add('current');
+      else player2.classList.add('current');
+    }
+
+    // Declarar victoria
+    function victoria() {
+      winnerMessage.textContent = modoPartida === 'solo' ? '¡Has ganado!' : `¡Jugador ${jugadorActual} gana!`;
+      winnerLevel.textContent = `Alcanzaste el nivel ${modoPartida === 'solo' ? nivel : (jugadorActual === 1 ? nivelJ1 : nivelJ2)}`;
+      victoryScreen.style.display = 'flex';
+    }
+
+    // Agregar eventos a botones
+    function agregarEventos() {
+      document.querySelectorAll('.btn-wayuu').forEach(btn => {
+        btn.onclick = null;
+        btn.onclick = () => {
+          if (!turnoJugador) return;
+          const id = btn.id;
+          iluminar(id);
+          if (id === secuencia[indiceJugador]) {
+            indiceJugador++;
+            if (indiceJugador === secuencia.length) {
+              nivel++;
+              indiceJugador = 0;
+
+              if (modoPartida === 'multi') {
+                if (jugadorActual === 1) nivelJ1 = Math.max(nivelJ1, nivel);
+                else nivelJ2 = Math.max(nivelJ2, nivel);
+                document.getElementById('nivel1').textContent = nivelJ1;
+                document.getElementById('nivel2').textContent = nivelJ2;
+              }
+
+              if (nivel > nivelVictoria) {
+                victoria();
+                return;
+              }
+
+              setTimeout(siguienteNivel, 800);
+            }
+          } else {
+            playTone(200);
+            if (modoPartida === 'solo') {
+              estadoElement.textContent = '¡Fallaste! Reinicia.';
+              startBtn.disabled = false;
+              turnoJugador = false;
+            } else {
+              estadoElement.textContent = `¡Error! Turno del otro jugador.`;
+              setTimeout(cambiarJugador, 1000);
+            }
+          }
+        };
+      });
+    }
+
+    // Menú: elegir modo de juego (figuras o colores)
+    modoFigurasBtn.addEventListener('click', () => {
+      modoJuego = 'figuras';
+      modoText.textContent = 'Modo: Figuras Geométricas';
+      menu.style.display = 'none';
+      intro.style.display = 'flex';
+    });
+
+    modoColoresBtn.addEventListener('click', () => {
+      modoJuego = 'colores';
+      modoText.textContent = 'Modo: Colores Tradicionales';
+      menu.style.display = 'none';
+      intro.style.display = 'flex';
+    });
+
+    // Intro: elegir solitario o multijugador
+    soloBtn.addEventListener('click', () => {
+      modoPartida = 'solo';
+      intro.style.display = 'none';
+      crearBotones();
+      scoreboard.style.display = 'none';
+      estadoElement.textContent = 'Presiona Iniciar para comenzar';
+      startBtn.disabled = false;
+    });
+
+    multiBtn.addEventListener('click', () => {
+      modoPartida = 'multi';
+      intro.style.display = 'none';
+      crearBotones();
+      scoreboard.style.display = 'flex';
+      estadoElement.textContent = 'Jugador 1 comienza';
+      startBtn.disabled = false;
+    });
+
+    // Botón de regresar
+    backBtn.addEventListener('click', () => {
+      menu.style.display = 'flex';
+      intro.style.display = 'none';
+      gameGrid.innerHTML = '';
+      scoreboard.style.display = 'none';
+      victoryScreen.style.display = 'none';
+      reset();
+    });
+
+    // Botones principales
+    startBtn.addEventListener('click', () => {
+      startBtn.disabled = true;
+      reset();
+      siguienteNivel();
+    });
+
+    resetBtn.addEventListener('click', () => {
+      reset();
+      estadoElement.textContent = 'Reiniciado';
+    });
+
+    playAgain.addEventListener('click', () => {
+      victoryScreen.style.display = 'none';
+      reset();
+      startBtn.disabled = false;
+    });
+
+    function reset() {
+      secuencia = [];
+      nivel = 1;
+      indiceJugador = 0;
+      turnoJugador = false;
+      if (modoPartida === 'multi') {
+        jugadorActual = 1;
+        actualizarTurnoUI();
+      }
+    }
+
+    // Inicializar
+    reset();
+  </script>
+</body>
+</html>
